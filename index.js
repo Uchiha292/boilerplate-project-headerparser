@@ -24,6 +24,27 @@ app.get('/api/hello', function (req, res) {
   res.json({ greeting: 'hello API' });
 });
 
+async function getApi (){
+  try {
+    const response = await fetch('https://api.ipify.org/?format=json');
+    const data = await response.json();
+    return data.ip;
+  } 
+  catch(error) {
+    console.error("Cant fetch Ip", error);
+    return "error";
+  }
+}
+
+app.get('/api/whoami', async (req,res)=>{
+  res.json(
+    {
+     ipaddress: await getApi(),
+     language: req.get('Accept-Language'),
+     software: req.get('User-Agent')
+    })
+})
+
 // listen for requests :)
 var listener = app.listen(process.env.PORT || 3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
